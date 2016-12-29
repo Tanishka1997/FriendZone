@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    {%if title%}
+    <title>{{title}}-Friendzone</title>
+    {%else%}
+    <title>Welcome to Friendzone</title>
+    {%endif%}
+  </head>
+  <body>
+    <div>
+    <a href="/index">Go to Home</a>
+    </div>
+    <hr>
+    {%block content%} {%endblock%}
+  </body>
+</html>
