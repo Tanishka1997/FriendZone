@@ -7,11 +7,26 @@
       <p>
           Enter your username:<br>
           {{ form.Username}}<br>
+          {% for error in form.Username.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}<br>
       </p>
-      <p>{{ form.remember_me }} Remember Me</p>
-      <p>Enter E-mail:{{form.Email}}</p>
-      <p>Password:{{form.Password}}</p>
-      <p>Confirm:{{form.confirm}}</p>
+
+      <p>Enter E-mail:<br>{{form.Email}}<br>
+        {% for error in form.Email.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+      </p>
+      <p>Password:<br>{{form.Password}}<br>
+        {% for error in form.Password.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+      </p>
+      <p>Confirm:<br>{{form.confirm}}<br>
+        {% for error in form.confirm.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}<br>
+      </p>
       <p><input type="submit" value="Register"></p>
   </form>
 {% endblock %}

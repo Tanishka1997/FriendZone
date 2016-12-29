@@ -8,8 +8,8 @@ class LoginForm(Form):
     remember_me=BooleanField('remember_me',default=False)
 
 class RegisterForm(Form):
-    Username = StringField('username', validators=[Length(min=4, max=25)])
-    Email = StringField('Email Address', validators=[Length(min=6, max=35)])
+    Username = StringField('username', validators=[Length(min=4, max=25),DataRequired()])
+    Email = StringField('Email Address', validators=[Length(min=6, max=35),DataRequired()])
     Password = PasswordField('New Password',
-        validators=[DataRequired(),EqualTo('confirm', message='Passwords must match')])
+        validators=[DataRequired(),EqualTo('confirm', message='Passwords must match'),DataRequired()])
     confirm = PasswordField('Repeat Password')
