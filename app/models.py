@@ -2,8 +2,8 @@ from app import db
 
 class User(db.Model):
     id=db.Column(db.Integer,primary_key=True)
-    user=db.Column(db.String(35),index=True,unique=True)
-    email=db.Column(db.String(35),index=True,unique=True)
+    user=db.Column(db.String(35),index=True,unique=True,nullable=False)
+    email=db.Column(db.String(35),index=True,unique=True,nullable=False)
     password=db.Column(db.String(35),index=True)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 

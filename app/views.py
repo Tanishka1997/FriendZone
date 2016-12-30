@@ -3,7 +3,8 @@ from flask import render_template,flash,redirect
 from .forms import LoginForm,RegisterForm
 from app import db
 from .models import User
-
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
 @app.route('/')
 @app.route('/index')
 def index():
@@ -22,12 +23,13 @@ def login():
 def register():
 	form=RegisterForm()
 	if form.validate_on_submit():
-		new_user=User(user=form.Username.data,email=form.Email.data,password=str(form.Password.data))
-		db.session.add(new_user)
-		try:
+
+		if User.query.filter(or_(User.user==form.Username.data,User.email==form.Email.data)).count()>0:
+			return redirect('/register')
+		else:
+			new_user=User(user=form.Username.data,email=form.Email.data,password=str(form.Password.data))
+			db.session.add(new_user)
 			db.session.commit()
 			return redirect('/index')
-		except Exception as e:
-			return redirect('/login')
 
 	return (render_template('register.html',title='Register',form=form))
