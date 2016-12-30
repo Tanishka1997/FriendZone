@@ -11,5 +11,5 @@ class RegisterForm(Form):
     Username = StringField('username', validators=[Length(min=4, max=25),DataRequired()])
     Email = StringField('Email Address', validators=[Length(min=6, max=35),DataRequired()])
     Password = PasswordField('New Password',
-        validators=[DataRequired(),EqualTo('confirm', message='Passwords must match'),DataRequired()])
+        validators=[DataRequired(),EqualTo('confirm', message='Passwords must match'),DataRequired(),Length(min=6)])
     confirm = PasswordField('Repeat Password')
