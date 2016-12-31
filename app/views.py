@@ -6,6 +6,7 @@ from app import db,lm
 from .models import User
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_,and_
+from .oauth import OAuthSignIn
 
 @app.route('/')
 @app.route('/index')
@@ -64,3 +65,27 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/authorize/<provider>')
+def oauth_authorize(provider):
+	if not current_user.is_anonymous:
+		return redirect(url_for('index'))
+	oauth=OAuthSignIn.get_provider(provider)
+	return oauth.authorize()
+
+@app.route('/callback/<provider>')
+def oauth_callback(provider):
+	if not current_user.is_anonymous:
+		return redirect(url_for('index'))
+	oauth=OAuthSignIn.get_provider(provider)
+	social_id,user_name,email=oauth.callback()
+	if social_id is None:
+		flash("Authentication Failed")
+		return (redirect(url_for('login')))
+	user=User.query.filter_by(social_id=social_id).first()
+	if not user:
+		user = User(social_id=social_id, nickname=username, email=email)
+		db.session.add(user)
+		db.session.commit()
+	login_user(user, True)
+	return redirect(url_for('index'))

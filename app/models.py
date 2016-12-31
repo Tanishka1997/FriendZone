@@ -1,10 +1,11 @@
 from app import db
-
-class User(db.Model):
+from flask.ext.login import UserMixin
+class User(UserMixin,db.Model):
     id=db.Column(db.Integer,primary_key=True)
+    social_id=db.Column(db.String(64),unique=True)
     user=db.Column(db.String(35),index=True,unique=True,nullable=False)
     email=db.Column(db.String(35),index=True,unique=True,nullable=False)
-    password=db.Column(db.String(35),index=True)
+    password=db.Column(db.String(35))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     @property
@@ -23,7 +24,7 @@ class User(db.Model):
         try:
             return unicode(self.id)
         except NameError:
-            return str(self.id)  
+            return str(self.id)
 
 
     def __repr__(self):
