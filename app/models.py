@@ -1,5 +1,5 @@
 from app import db
-from flask.ext.login import UserMixin
+from flask_login import UserMixin
 class User(UserMixin,db.Model):
     id=db.Column(db.Integer,primary_key=True)
     social_id=db.Column(db.String(64),unique=True)

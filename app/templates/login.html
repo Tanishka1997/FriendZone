@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='styles/login.css') }}">
+</head>
+
   <h1>Sign In</h1>
   <form action="" method="post" name="login">
       {{ form.hidden_tag() }}
@@ -21,5 +25,12 @@
       <p>{{ form.remember_me }} Remember Me</p>
       <p><input type="submit" value="Sign In"></p>
   </form>
-  <p>Dont have an account? <a href="register">Create One</a></p>
+  <hr>
+
+  <p>Dont have an account? <a href="register">Create One</a> or
+    <br>
+    <form action="/authorize/facebook" method="get">
+      <p><button type="submit" id="facebook">Sign in with Facebook</button></p>
+    </form>
+  </p>
 {% endblock %}
