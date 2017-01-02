@@ -7,12 +7,13 @@
     {%else%}
     <title>Welcome to Friendzone</title>
     {%endif%}
-    
+
   </head>
   <body>
     <div>
     <a href="/index">Go to Home</a>
     {% if g.user.is_authenticated %}
+        | <a href="{{url_for('user',user=g.user.user)}}">Your Profile</a>
         | <a href="{{ url_for('logout') }}">Logout</a>
     {% endif %}
     </div>

@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField,BooleanField,PasswordField
+from wtforms import StringField,BooleanField,PasswordField,TextAreaField
 from wtforms.validators import DataRequired,EqualTo,Length
 
 class LoginForm(Form):
@@ -13,3 +13,7 @@ class RegisterForm(Form):
     Password = PasswordField('New Password',
         validators=[DataRequired(),EqualTo('confirm', message='Passwords must match'),DataRequired(),Length(min=6)])
     confirm = PasswordField('Repeat Password')
+
+class EditForm(Form):
+    Username=StringField('username',validators=[DataRequired()])
+    AboutMe=TextAreaField('about_me',validators=[Length(min=0,max=140)])

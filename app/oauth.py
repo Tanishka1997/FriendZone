@@ -2,7 +2,6 @@ from rauth import OAuth1Service, OAuth2Service
 from flask import current_app, url_for, request, redirect, session
 class OAuthSignIn(object):
     providers = None
-
     def __init__(self, provider_name):
         self.provider_name = provider_name
         credentials = current_app.config['OAUTH_CREDENTIALS'][provider_name]

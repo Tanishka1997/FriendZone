@@ -1,12 +1,13 @@
 from app import app
 from flask import render_template,flash,redirect,url_for,request,g,session
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import LoginForm,RegisterForm
+from .forms import LoginForm,RegisterForm,EditForm
 from app import db,lm
 from .models import User
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_,and_
 from .oauth import OAuthSignIn
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -17,9 +18,23 @@ def index():
 
 	return (render_template('index.html',title='Home',user=user,posts=posts))
 
+@app.route('/user/<user>')
+@login_required
+def user(user):
+	user=User.query.filter_by(user=user).first()
+	posts=[]
+	if user is None:
+		flash('User %s not found' %user)
+		return (redirect(url_for('index')))
+	return (render_template('user.html',user=user,posts=posts))
+
 @app.before_request
 def before_request():
-    g.user = current_user
+	g.user = current_user
+	if g.user.is_authenticated:
+		g.user.last_seen=datetime.utcnow()
+		db.session.query(User).filter_by(user=g.user.user).update({User.last_seen:g.user.last_seen})
+		db.session.commit()
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -44,11 +59,30 @@ def login():
 def load_user(id):
     return User.query.get(int(id))
 
+@app.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit():
+	form=EditForm()
+	if form.validate_on_submit():
+		if User.query.filter(User.user==form.Username.data).count()==0:
+			g.user.user=form.Username.data
+			g.user.about_me=form.AboutMe.data
+			db.session.query(User).filter_by(user=g.user.user).update({User.user:form.Username.data})
+			db.session.query(User).filter_by(user=g.user.user).update({User.about_me:form.AboutMe.data})
+			db.session.commit()
+			flash("Your have edited your profile Successfully")
+			return redirect(url_for('edit'))
+		else:
+			flash("Username is already used by another user")
+	else:
+		form.Username.data=g.user.user
+		form.AboutMe.data=g.user.about_me
+	return render_template('edit.html',form=form)
+
 @app.route('/register',methods=['GET','POST'])
 def register():
 	form=RegisterForm()
 	if form.validate_on_submit():
-
 		if User.query.filter(or_(User.user==form.Username.data,User.email==form.Email.data)).count()>0:
 			flash("Username and email for any User must be unique.Try registering again")
 			return redirect('/register')
@@ -57,8 +91,8 @@ def register():
 			db.session.add(new_user)
 			db.session.commit()
 			flash("Successfully registered with FriendZone")
-			return redirect('/index')
-
+			login_user(new_user,True)
+			return redirect(request.args.get('next') or url_for('index'))
 	return (render_template('register.html',title='Register',form=form))
 
 @app.route('/logout')
