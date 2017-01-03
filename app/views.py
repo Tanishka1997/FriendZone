@@ -119,6 +119,9 @@ def oauth_callback(provider):
 	user=User.query.filter_by(social_id=social_id).first()
 	if not user:
 		user = User(social_id=social_id, user=user_name, email=email)
+		if User.query.filter(User.email==user.email).count()>0:
+				flash("Error! This E-mail is alredy in use by another account.")
+				return (redirect(url_for('login')))
 		db.session.add(user)
 		db.session.commit()
 	login_user(user, True)
