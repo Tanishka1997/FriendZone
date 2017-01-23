@@ -9,6 +9,16 @@ from sqlalchemy import or_,and_
 from .oauth import OAuthSignIn
 from datetime import datetime
 
+
+@app.errorhandler(404)
+def not_found_erro(error):
+	return (render_template('404.html'))
+
+@app.errorhandler(500)
+def internal_error(error):
+	db.session.rollback()
+	return (render_template('500.html'))
+
 @app.route('/')
 @app.route('/index')
 @login_required
